@@ -360,43 +360,20 @@
 <h2>Introducing NeuralRemaster with Phase-Preserving Diffusion</h2>
 <h3>Re-imagine Retro Games</h3>
 <div class="card">
-    <img src="assets/tombraider_walkthrough_clip2_concat_h.gif" height=auto width="100%">
-    <img src="assets/gta3_clip4_concat_h.gif" height=auto width="100%">
+    <img src="assets/512_tombraider_walkthrough_clip2_concat_h.gif" height=auto width="100%">
+    <img src="assets/512_gta3_clip4_concat_h.gif" height=auto width="100%">
 </div>
-<!--
-<div class="card">
-<div class="compare-row">
-  <div class="compare-container">
-    <img class="compare-img compare-img--before"
-         src="assets/image2_input.jpg"
-         alt="Before">
-    <img class="compare-img compare-img--after"
-         src="assets/image2_result.jpg"
-         alt="After">
-  </div>
-  <div class="compare-container">
-    <img class="compare-img compare-img--before"
-         src="assets/image3_input.png"
-         alt="Before">
-    <img class="compare-img compare-img--after"
-         src="assets/image3_result.png"
-         alt="After">
-  </div>
-</div>
-<p class="compare-hint">← Drag the bar to compare →</p>
-    </div>
--->
   </section>
 <h3>And More</h3>
 <div class="figure-row">
     <div class="figure">
-        <img src="assets/car.gif"/>
+        <img src="assets/512_car.gif"/>
     </div>
     <div class="figure">
-        <img src="assets/dog.gif"/>
+        <img src="assets/512_dog.gif"/>
     </div>
     <div class="figure">
-        <img src="assets/front_rgb.gif"/>
+        <img src="assets/512_front_rgb.gif"/>
     </div>
 </div>
 </section>
@@ -414,7 +391,7 @@
         In frequency domain, Gaussian noise destroys both the magnitude and phase. 
       </p>
       <div align="center">
-        <img src="assets/gp_1d.gif" height="auto" width="70%">
+        <img src="assets/512_gp_1d.gif" height="auto" width="60%">
         <div class="figure-caption">
             Gaussian Diffusion on a 1D signal in frequency domain.
         </div>
@@ -427,15 +404,15 @@
     <div class="compare-row">
     <div class="compare-container">
         <img class="compare-img compare-img--before"
-            src="assets/image4_input.png"
+            src="assets/image4_input.jpg"
             alt="Before">
         <img class="compare-img compare-img--after"
-            src="assets/chatgpt.png"
+            src="assets/chatgpt.jpg"
             alt="After">
     </div>
     <div class="compare-container">
         <img class="compare-img compare-img--before"
-            src="assets/image4_input.png"
+            src="assets/image4_input.jpg"
             alt="Before">
         <img class="compare-img compare-img--after"
             src="assets/qwen.webp"
@@ -464,8 +441,8 @@
       </div>
       <p>Inspired by this observation, we introduce phase-preserving diffusion, diffusing magnitude while keeping most of the phase. </p>
       <div align="center">
-        <img src="assets/gp_1d.gif" height="auto" width="45%">
-        <img src="assets/ppd_1d.gif" height="auto" width="45%">
+        <img src="assets/512_gp_1d.gif" height="auto" width="45%">
+        <img src="assets/512_ppd_1d.gif" height="auto" width="45%">
         <div class="figure-caption">
             Gaussian Diffusion (left) and Phase-Preserving Diffusion (right) on a 1D signal in frequency domain.
         </div>
@@ -484,18 +461,18 @@
     <div class="compare-row">
     <div class="compare-container">
         <img class="compare-img compare-img--before"
-            src="assets/image4_input.png"
+            src="assets/image4_input.jpg"
             alt="Before">
         <img class="compare-img compare-img--after"
-            src="assets/qwen.webp"
+            src="assets/qwen.jpg"
             alt="After">
     </div>
     <div class="compare-container">
         <img class="compare-img compare-img--before"
-            src="assets/image4_input.png"
+            src="assets/image4_input.jpg"
             alt="Before">
         <img class="compare-img compare-img--after"
-            src="assets/image4_result.png"
+            src="assets/image4_result.jpg"
             alt="After">
     </div>
     </div>
@@ -525,7 +502,7 @@
         <li>High frequencies use the noise phase → allow appearance variation and detailed edits.</li>
       </ul>
       <div align="center">
-        <img src="assets/freqsel.gif" height="auto" width="80%">
+        <img src="assets/512_freqsel.gif" height="auto" width="60%">
         <div class="figure-caption">
             Same noise, different <code>r</code>: large <code>r</code> keeps geometry almost perfectly aligned, small <code>r</code> allows creative edits
         </div>
