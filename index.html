@@ -1,1 +1,660 @@
-<h1>title </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NeuralRemaster: Phase-Preserving Diffusion for Structure-Aligned Generation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+.compare-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;       /* Tailwind gray-500 style */
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+.compare-container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;   /* optional cap so it doesn't get huge on big monitors */
+  margin: 1.5rem auto;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+  cursor: ew-resize;
+
+  /* 👇 This keeps height = width * (9/16) */
+  aspect-ratio: 16 / 9;
+
+  --pos: 50%;
+}
+
+/* stack everything in the same fixed-size box */
+/* Outer box: responsive width, fixed aspect ratio */
+.compare-container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;       /* cap the size; tweak or remove */
+  margin: 1.5rem auto;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+  cursor: ew-resize;
+
+  /* 👇 This enforces the “forced aspect ratio” */
+  aspect-ratio: 16 / 9;
+
+  /* Slider position (0–100%) */
+  --pos: 50%;
+}
+
+/* Stack children to fill container */
+.compare-container > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* 🔥 Force both images to exactly fill the box (distort allowed) */
+.compare-img {
+  width: 100%;
+  height: 100%;
+  /* no object-fit: we want stretching if aspect ratio differs */
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Bottom image fully visible */
+.compare-img--before {
+  z-index: 1;
+}
+
+/* Top image is clipped left→right with clip-path */
+.compare-img--after {
+  z-index: 2;
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+
+/* Handle based on --pos */
+.compare-handle {
+  inset: 0;
+  left: var(--pos);
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.compare-handle-line {
+  width: 2px;
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.4);
+}
+
+.compare-handle-circle {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: white;
+  border: 2px solid rgba(0,0,0,.8);
+  box-shadow: 0 3px 8px rgba(0,0,0,.3);
+}
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .compare-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      color: #111827;
+      background: #f9fafb;
+    }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    h1 {
+      font-size: clamp(2.1rem, 3vw, 2.6rem);
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      margin-top: 2.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.4rem;
+      font-size: 1.4rem;
+    }
+    h3 {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+    }
+    .subtitle {
+      font-size: 1.05rem;
+      color: #4b5563;
+      margin-bottom: 1rem;
+    }
+    .authors {
+      font-size: 0.98rem;
+      color: #4b5563;
+      margin-bottom: 0.2rem;
+    }
+    .affiliations {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      font-size: 0.9rem;
+    }
+    .hero {
+      margin: 0 auto 1.5rem;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.22);
+      background: #000;
+    }
+    .hero img, .hero video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .tagline {
+      text-align: center;
+      font-size: 1.05rem;
+      color: #374151;
+      margin-bottom: 2rem;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: minmax(0, 1fr); }
+    }
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.1rem 1.2rem;
+      border: 1px solid #e5e7eb;
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.5rem 0 0.2rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .figure-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    }
+
+    /* Each figure takes up at least 220px, can grow beyond that */
+.figure-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Each figure should shrink-wrap to its content width */
+.figure {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;           /* 👈 important: don't stretch to equal width */
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+/* 🔑 Same height, varying width */
+.figure img {
+  height: 360px;            /* pick your uniform image height */
+  width: auto;              /* width adjusts based on aspect ratio */
+  display: block;
+}
+
+/* Caption under the image */
+.figure-caption {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.86rem;
+      background: #f3f4f6;
+      padding: 0.1rem 0.25rem;
+      border-radius: 0.25rem;
+    }
+    pre {
+      background: #020617;
+      color: #e5e7eb;
+      padding: 1rem 1.2rem;
+      border-radius: 0.6rem;
+      overflow-x: auto;
+      font-size: 0.83rem;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER & QUICK LINKS -->
+  <header>
+    <h1>NeuralRemaster: Phase-Preserving Diffusion for Structure-Aligned Generation</h1>
+
+    <p class="authors">
+      <a href="https://zengxianyu.github.io/">Yu Zeng</a><sup>1</sup>,
+      <a href="https://charlesochoa.github.io/">Charles Ochoa</a><sup>1</sup>,
+      <a href="https://mingyuanzhou.github.io/">Mingyuan Zhou</a><sup>2</sup>,
+      <a href="https://engineering.jhu.edu/vpatel36/vishal-patel/">Vishal M. Patel</a><sup>3</sup>,
+      <a href="https://vitorguizilini.github.io/">Vitor Guizilini</a><sup>1</sup>,
+      <a href="https://rowanmcallister.github.io/">Rowan McAllister</a><sup>1</sup>
+    </p>
+    <p class="affiliations">
+      <sup>1</sup>Toyota Research Institute &nbsp;&nbsp;
+      <sup>2</sup>UT Austin &nbsp;&nbsp;
+      <sup>3</sup>Johns Hopkins University
+    </p>
+
+    <div class="links">
+      <a class="pill" href="PAPER_LINK_HERE" target="_blank">📄 arXiv</a>
+      <a class="pill" href="VIDEO_LINK_HERE" target="_blank">🎥 Video</a>
+      <a class="pill" href="CODE_LINK_HERE" target="_blank">💻 Code</a>
+      <a class="pill" href="UI_LINK_HERE" target="_blank">🎨 ComfyUI</a>
+      <a class="pill" href="#bibtex">📎 BibTeX</a>
+    </div>
+  </header>
+
+  <div class="compare-container">
+  <img class="compare-img compare-img--before"
+       src="assets/image_input.jpg"
+       alt="Before">
+
+  <img class="compare-img compare-img--after"
+       src="assets/image_result.jpg"
+       alt="After">
+
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+</div>
+
+<p class="compare-hint">← Drag the bar to compare →</p>
+
+
+
+
+  <p class="tagline">
+    We introduce <strong>Phase-Preserving Diffusion (ϕ-PD)</strong>, a drop-in change to the diffusion process that
+    preserves image phase while diffusing only magnitude — enabling <strong>geometry-consistent re-rendering</strong> for games,
+    videos, and simulators.
+  </p>
+
+  <!-- 0. TL;DR & ABSTRACT (ANCHOR FOR RESEARCHERS) -->
+  <section id="tldr">
+    <div class="card">
+    <h2>TL;DR</h2>
+    <ul>
+        <li><strong>Key insight:</strong> Replace Gaussian noise with <em>phase-preserving</em> noise: keep input phase, randomize magnitude.</li>
+        <li><strong>Control strength:</strong> Use one cutoff radius <code>r</code> to tune alignment strength.</li>
+        <li><strong>Plug-and-play:</strong> No architectural change, no additional parameters; works with any base model for images and videos.</li>
+        <li><strong>Applications:</strong> We demonstrate results for photoreal game remasters, autonomous driving simulation enhancement, and stylized re-rendering, while the method can potentially be applied to other structured-aligned generation tasks.</li>
+    </ul>
+    </div>
+  </section>
+
+  <section id="intro">
+<h2>Introducing NeuralRemaster with Phase-Preserving Diffusion</h2>
+<h3>Re-imagine Retro Games</h3>
+<div class="card">
+    <img src="assets/tombraider_walkthrough_clip2_concat_h.gif" height=auto width="100%">
+    <img src="assets/gta3_clip4_concat_h.gif" height=auto width="100%">
+</div>
+<!--
+<div class="card">
+<div class="compare-row">
+  <div class="compare-container">
+    <img class="compare-img compare-img--before"
+         src="assets/image2_input.jpg"
+         alt="Before">
+    <img class="compare-img compare-img--after"
+         src="assets/image2_result.jpg"
+         alt="After">
+  </div>
+  <div class="compare-container">
+    <img class="compare-img compare-img--before"
+         src="assets/image3_input.png"
+         alt="Before">
+    <img class="compare-img compare-img--after"
+         src="assets/image3_result.png"
+         alt="After">
+  </div>
+</div>
+<p class="compare-hint">← Drag the bar to compare →</p>
+    </div>
+-->
+  </section>
+<h3>And More</h3>
+<div class="figure-row">
+    <div class="figure">
+        <img src="assets/car.gif"/>
+    </div>
+    <div class="figure">
+        <img src="assets/dog.gif"/>
+    </div>
+    <div class="figure">
+        <img src="assets/front_rgb.gif"/>
+    </div>
+</div>
+</section>
+
+
+
+
+
+  <!-- 2. KEY INSIGHT: PHASE = STRUCTURE -->
+  <section id="insight">
+    <h2>Gaussian Diffusion in Frequency Domain</h2>
+    <div class="card">
+      <p>
+        Most existing diffusion models corrups images with Gaussian noise, and learn to generate images by learning to invert this process. 
+        In frequency domain, Gaussian noise destroys both the magnitude and phase. 
+      </p>
+      <div align="center">
+        <img src="assets/gp_1d.gif" height="auto" width="70%">
+        <div class="figure-caption">
+            Gaussian Diffusion on a 1D signal in frequency domain.
+        </div>
+      </div>
+
+      <p>
+        This works well for generating images from scratch (e.g. text-to-image), however, could lead to structural misalignment for image-to-image or video-to-video tasks. 
+      </p>
+    <div class="card">
+    <div class="compare-row">
+    <div class="compare-container">
+        <img class="compare-img compare-img--before"
+            src="assets/image4_input.png"
+            alt="Before">
+        <img class="compare-img compare-img--after"
+            src="assets/chatgpt.png"
+            alt="After">
+    </div>
+    <div class="compare-container">
+        <img class="compare-img compare-img--before"
+            src="assets/image4_input.png"
+            alt="Before">
+        <img class="compare-img compare-img--after"
+            src="assets/qwen.webp"
+            alt="After">
+    </div>
+    </div>
+    <p class="compare-hint">← Drag the bar to compare →</p>
+        <div class="figure-caption" style="text-align: center;">
+           Results from ChatGPT and Qwen-Edit: "Make this look like a real picture". Overlay shows misalignment.
+        </div>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="card">
+    <h2>Phase-Preserving Diffusion (ϕ-PD)</h2>
+      <p>
+        Classical signal processing tells us that structural information is encoded in the phase. 
+        If you mix the phase of one image with the magnitude of another, the result keeps the structure of where the phase is from.
+      </p>
+      <div align="center">
+        <img src="assets/phasemix.png" height="auto" width="50%">
+        <div class="figure-caption">
+            Mixing the phase of one image with the magnitude of another preserves the structure of where the phase is fro
+        </div>
+      </div>
+      <p>Inspired by this observation, we introduce phase-preserving diffusion, diffusing magnitude while keeping most of the phase. </p>
+      <div align="center">
+        <img src="assets/gp_1d.gif" height="auto" width="45%">
+        <img src="assets/ppd_1d.gif" height="auto" width="45%">
+        <div class="figure-caption">
+            Gaussian Diffusion (left) and Phase-Preserving Diffusion (right) on a 1D signal in frequency domain.
+        </div>
+      </div>
+      <p>Instead of Gaussian noise, ϕ-PD uses structured noise that shares the image phase. This allows the model to learn to denoise without ever losing structural alignement.
+        Unlike previous methods, ϕ-PD does not need additional module to encode the structural information from the input. It is model agnostic, works with any base model for images or videos, and makes no architectural changes.
+         </p>
+      <div align="center">
+        <img src="assets/diagram.png" height="auto" width="90%">
+        <div class="figure-caption">
+            ϕ-PD does not alter the model architectue or training objective, remaining lightweight and model agnostic. 
+        </div>
+      </div>
+      This provides a simple and efficient way to acheive structure-aligned generation with diverse appearance while keeping the original structure.
+    <div class="card">
+    <div class="compare-row">
+    <div class="compare-container">
+        <img class="compare-img compare-img--before"
+            src="assets/image4_input.png"
+            alt="Before">
+        <img class="compare-img compare-img--after"
+            src="assets/qwen.webp"
+            alt="After">
+    </div>
+    <div class="compare-container">
+        <img class="compare-img compare-img--before"
+            src="assets/image4_input.png"
+            alt="Before">
+        <img class="compare-img compare-img--after"
+            src="assets/image4_result.png"
+            alt="After">
+    </div>
+    </div>
+    <p class="compare-hint">← Drag the bar to compare →</p>
+        <div class="figure-caption" style="text-align: center;">
+           Qwen-Edit (left) and ϕ-PD (right) on the same input. 🎉 No misalignment!
+        </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- 4. CONTROL: FREQUENCY-SELECTIVE STRUCTURED NOISE -->
+  <section id="control">
+    <h2>Controlling Alignment Strength with Frequency-Selective Structured Noise</h2>
+    <div class="card">
+      <p>
+        One perk of ControlNet over simple channel-wise concatenation is that it allows us to control the alignment strength. 
+        </p>
+    <p>
+        ϕ-PD can provide the same flexibility without the need for a heavy encoder module. This is achieved by introducing Frequency-Selective Structured (FSS) noise.
+      </p>
+      <p>
+        We define a smooth mask in the frequency domain with cutoff radius <code>r</code>:
+      </p>
+      <ul>
+        <li>Low frequencies (inside <code>r</code>) keep the image phase → preserve coarse geometry and layout.</li>
+        <li>High frequencies use the noise phase → allow appearance variation and detailed edits.</li>
+      </ul>
+      <div align="center">
+        <img src="assets/freqsel.gif" height="auto" width="80%">
+        <div class="figure-caption">
+            Same noise, different <code>r</code>: large <code>r</code> keeps geometry almost perfectly aligned, small <code>r</code> allows creative edits
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. APPLICATIONS: EMBODIED AI & SIM-TO-REAL -->
+  <section id="sim2real">
+    <h2>Applications in Embodied AI and Sim-to-Real</h2>
+    <div class="card">
+      <div class="badge-row">
+        <span class="badge">Autonomous driving</span>
+        <span class="badge">Simulation enhancement</span>
+        <span class="badge">Zero-shot transfer</span>
+      </div>
+      <p>
+        In autonomous driving and robotics, planners depend on consistent geometry: lane positions, obstacles, and ego
+        motion. ϕ-PD can enhance simulators like CARLA by re-rendering them to look more like real-world data without
+        altering the underlying scene.
+      </p>
+
+      <div align="center">
+        <img src="assets/carla_zoomin.jpg" height="auto" width="80%">
+        <div class="figure-caption">
+            Comparison to Cosmos-Transfer2.5 (vis input, control weight 0.5).
+        </div>
+      </div>
+      <p>
+        In our experiments, ϕ-PD achieves up to 50% reduction in ADE/FDE/L2 on Waymo’s WOD-E2E validation set compared to the CARLA-only baseline.
+      </p>
+      <div align="center">
+        <img src="assets/waymo_err.png" height="auto" width="50%">
+        <div class="figure-caption">
+            Error of a simple ResNet-34 planner trained on CARLA/transfered images. Lower is better. <sup>1</sup> Zero-shot transfer. <sup>2</sup> With AV finetuning.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 7. EVIDENCE & COMPARISONS -->
+  <section id="content">
+    <h2>Applications in Content Creation</h2>
+    <div class="card">
+      <p>
+        For content creation, given real images or videos, ϕ-PD can generate creative visual effects while keeping the structure intact.
+    </p>
+      <div align="center">
+        <img src="assets/dog720p_5s_concat_result3_h.gif" height="auto" width="100%">
+        <div class="figure-caption">
+            Stylized re-rendering of a dog video. Upper left: original video. 
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. VIDEO & CITATION -->
+  <section id="video">
+    <h2>Video</h2>
+    <div class="card">
+      <div class="hero">
+        <!-- Replace src with your hosted video link -->
+        <video src="VIDEO_LINK_HERE" controls playsinline></video>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <h2>Citation</h2>
+    <p>If you find this work useful, please cite:</p>
+    <pre>@article{zeng2025neuralremaster,
+  title   = {NeuralRemaster: Phase-Preserving Diffusion for Structure-Aligned Generation},
+  author  = {Zeng, Yu and Ochoa, Charles and Zhou, Mingyuan and Patel, Vishal M and
+             Guizilini, Vitor and McAllister, Rowan},
+  journal = {arXiv preprint arXiv:XXXX.XXXXX},
+  year    = {2025}
+}</pre>
+  </section>
+
+<script>
+(function() {
+  const containers = document.querySelectorAll('.compare-container');
+
+  containers.forEach(container => {
+    let isDragging = false;
+
+    function clamp(v, min, max) {
+      return Math.min(Math.max(v, min), max);
+    }
+
+    function setPosition(clientX) {
+      const rect = container.getBoundingClientRect();
+      let x = clamp(clientX - rect.left, 0, rect.width);
+      const percent = (x / rect.width) * 100;
+      container.style.setProperty('--pos', percent + '%');
+    }
+
+    function start(e) {
+      isDragging = true;
+      setPosition(e.clientX ?? e.touches?.[0]?.clientX);
+    }
+
+    function move(e) {
+      if (!isDragging) return;
+      setPosition(e.clientX ?? e.touches?.[0]?.clientX);
+    }
+
+    function end() { isDragging = false; }
+
+    container.addEventListener('mousedown', start);
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+
+    container.addEventListener('touchstart', e => {
+      e.preventDefault();
+      start(e.touches[0]);
+    }, { passive: false });
+    window.addEventListener('touchmove', e => move(e.touches?.[0]), { passive: true });
+    window.addEventListener('touchend', end);
+    window.addEventListener('touchcancel', end);
+
+    // init at 50%
+    window.addEventListener('load', () => {
+      container.style.setProperty('--pos', '50%');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
