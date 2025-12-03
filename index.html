@@ -366,6 +366,9 @@
   <!-- 0. TL;DR & ABSTRACT (ANCHOR FOR RESEARCHERS) -->
   <section id="tldr">
     <div class="card">
+      <div align="center">
+        <img src="assets/noise_construct.gif" height="auto" width="90%">
+      </div>
     <h2>TL;DR</h2>
     <ul>
         <li><strong>Key insight:</strong> Replace Gaussian noise with <em>phase-preserving</em> noise: keep input phase, randomize magnitude.</li>
@@ -373,9 +376,6 @@
         <li><strong>Plug-and-play:</strong> No architectural change, no additional parameters; works with any base model for images and videos.</li>
         <li><strong>Applications:</strong> We demonstrate results for <a href="#intro">photoreal game remasters</a>, <a href="#content">stylized re-rendering</a>, and <a href="#sim2real">autonomous driving</a> while the method can potentially be applied to other structured-aligned generation tasks.</li>
     </ul>
-      <div align="center">
-        <img src="assets/noise_construct.gif" height="auto" width="90%">
-      </div>
     </div>
   </section>
 
@@ -593,6 +593,95 @@
       </div>
     </div>
   </section>
+
+
+<section id="additional_results">
+  <h2>Additional Results</h2>
+<div class="card">
+<p class="compare-hint">← Drag the bar to compare →</p>
+  <div class="compare-row">
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/gta3_clip2_radius25.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/gta3_clip2.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/Town01_forward_10sec_color1.0_radius55.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/Town01_forward_10sec.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+  </div>
+
+  <div class="compare-row">
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/test_new20_color1_radius37.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/test_new20.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/image3_result.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/image3_input.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+  </div>
+
+  <div class="compare-row">
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/test_new14_color0.5_radius40.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/test_new14.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+  <div class="compare-container">
+      <img class="compare-img compare-img--before"
+          src="assets/image2_result.jpg"
+          alt="After">
+      <img class="compare-img compare-img--after"
+          src="assets/image2_input.jpg"
+          alt="Before">
+  <div class="compare-handle">
+    <div class="compare-handle-line"></div>
+    <div class="compare-handle-circle"></div>
+  </div>
+  </div>
+
+  </div>
+</section>
+
 
   <section id="bibtex">
     <h2>Citation</h2>
