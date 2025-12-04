@@ -372,7 +372,7 @@
     <h2>TL;DR</h2>
     <ul>
         <li><strong>Key insight:</strong> Replace Gaussian noise with <em>phase-preserving</em> noise: keep input phase, randomize magnitude.</li>
-        <li><strong>Control strength:</strong> Use one cutoff radius <code>r</code> to tune alignment strength.</li>
+        <li><strong>Control strength:</strong> Use one threshold parameter <code>r</code> to control degree of alignment.</li>
         <li><strong>Plug-and-play:</strong> No architectural change, no additional parameters; works with any base model for images and videos.</li>
         <li><strong>Applications:</strong> We demonstrate results for <a href="#intro">photoreal game remasters</a>, <a href="#content">stylized re-rendering</a>, and <a href="#sim2real">autonomous driving</a> while the method can potentially be applied to other structured-aligned generation tasks.</li>
     </ul>
@@ -417,7 +417,7 @@
         <img src="assets/512_gp_1d.gif" height="auto" width="50%" align="center">
         <img src="assets/dog_noise_vis.gif" height="auto" width="45%" align="center">
         <div class="figure-caption">
-            Gaussian Diffusion on a 1D signal (left) and an image (right) in frequency domain.
+            Gaussian Diffusion on a 1D signal (left) and an image (right) in frequency domain. Even early diffusion steps destroy the phase.
         </div>
       </div>
 
