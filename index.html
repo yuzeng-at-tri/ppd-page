@@ -414,9 +414,10 @@
         In frequency domain, Gaussian noise destroys both the magnitude and phase. 
       </p>
       <div align="center">
-        <img src="assets/512_gp_1d.gif" height="auto" width="60%">
+        <img src="assets/512_gp_1d.gif" height="auto" width="50%" align="center">
+        <img src="assets/dog_noise_vis.gif" height="auto" width="45%" align="center">
         <div class="figure-caption">
-            Gaussian Diffusion on a 1D signal in frequency domain.
+            Gaussian Diffusion on a 1D signal (left) and an image (right) in frequency domain.
         </div>
       </div>
 
@@ -442,7 +443,7 @@
             alt="Before">
     </div>
     </div>
-    <p class="compare-hint">← Drag the bar to compare →</p>
+    <p class="compare-hint">← Drag the center line to compare →</p>
         <div class="figure-caption" style="text-align: center;">
            Results from ChatGPT and Qwen-Edit: "Make this look like a real picture". Overlay shows misalignment.
         </div>
@@ -464,10 +465,10 @@
       </div>
       <p>Inspired by this observation, we introduce phase-preserving diffusion, diffusing magnitude while keeping most of the phase. </p>
       <div align="center">
-        <img src="assets/512_gp_1d.gif" height="auto" width="45%">
-        <img src="assets/512_ppd_1d.gif" height="auto" width="45%">
+        <img src="assets/512_ppd_1d.gif" height="auto" width="50%" align="center">
+        <img src="assets/dog_strut_noise_vis.gif" height="auto" width="45%" align="center">
         <div class="figure-caption">
-            Gaussian Diffusion (left) and Phase-Preserving Diffusion (right) on a 1D signal in frequency domain.
+            Phase-Preserving Diffusion on a 1D signal (left) and an image (right) in frequency domain.
         </div>
       </div>
       <p>Instead of Gaussian noise, ϕ-PD uses structured noise that shares the image phase. This allows the model to learn to denoise without ever losing structural alignement.
@@ -499,7 +500,7 @@
             alt="After">
     </div>
     </div>
-    <p class="compare-hint">← Drag the bar to compare →</p>
+    <p class="compare-hint">← Drag the center line to compare →</p>
         <div class="figure-caption" style="text-align: center;">
            Qwen-Edit (left) and ϕ-PD (right) on the same input. 🎉 No misalignment!
         </div>
