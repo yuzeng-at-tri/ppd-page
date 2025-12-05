@@ -311,8 +311,8 @@
     <div class="links">
       <a class="pill" href="PAPER_LINK_HERE" target="_blank">📄 arXiv</a>
       <a class="pill" href="VIDEO_LINK_HERE" target="_blank">🎥 Video</a>
-      <a class="pill" href="CODE_LINK_HERE" target="_blank">💻 Code</a>
-      <a class="pill" href="UI_LINK_HERE" target="_blank">🎨 ComfyUI</a>
+      <a class="pill" href="https://github.com/zengxianyu/PPD-examples" target="_blank">💻 Code (Model)</a>
+      <a class="pill" href="https://github.com/zengxianyu/structured-noise" target="_blank">💻 Code (Noise)</a>
       <a class="pill" href="#bibtex">📎 BibTeX</a>
     </div>
   </header>
@@ -370,12 +370,13 @@
         <img src="assets/noise_construct.gif" height="auto" width="90%">
       </div>
     <h2>TL;DR</h2>
-    <ul>
-        <li><strong>Key insight:</strong> Replace Gaussian noise with <em>phase-preserving</em> noise: keep input phase, randomize magnitude.</li>
-        <li><strong>Control strength:</strong> Use one cutoff radius <code>r</code> to tune alignment strength.</li>
-        <li><strong>Plug-and-play:</strong> No architectural change, no additional parameters; works with any base model for images and videos.</li>
-        <li><strong>Applications:</strong> We demonstrate results for <a href="#intro">photoreal game remasters</a>, <a href="#content">stylized re-rendering</a>, and <a href="#sim2real">autonomous driving</a> while the method can potentially be applied to other structured-aligned generation tasks.</li>
-    </ul>
+<ul>
+    <li><strong>Key insight:</strong> Replace Gaussian noise with <em>phase-preserving</em> noise: keep the input phase, randomize the magnitude.</li>
+    <li><strong>Controllable alignment:</strong> A single cutoff parameter <code>r</code> adjusts how strictly structure is preserved.</li>
+    <li><strong>Plug-and-play:</strong> No architectural changes or extra parameters; works with any diffusion model for images or videos.</li>
+    <li><strong>Applications:</strong> <a href="#intro">photoreal game remasters</a>, <a href="#content">stylized re-rendering</a>, and <a href="#sim2real">autonomous driving</a>. 
+    ϕ-PD improves CARLA-to-Waymo planner performance by <strong>~50%</strong>, significantly reducing the sim-to-real gap.</li>
+</ul>
     </div>
   </section>
 
@@ -417,7 +418,7 @@
         <img src="assets/512_gp_1d.gif" height="auto" width="50%" align="center">
         <img src="assets/dog_noise_vis.gif" height="auto" width="45%" align="center">
         <div class="figure-caption">
-            Gaussian Diffusion on a 1D signal (left) and an image (right) in frequency domain. Even early diffusion steps destroys the phase.
+            Gaussian Diffusion on a 1D signal (left) and an image (right) in frequency domain. Even early diffusion steps destroy the phase.
         </div>
       </div>
 
@@ -556,7 +557,7 @@
         </div>
       </div>
       <p>
-        In our experiments, ϕ-PD achieves up to 50% reduction in ADE/FDE/L2 on Waymo’s WOD-E2E validation set compared to the CARLA-only baseline.
+        In our experiments, ϕ-PD achieves up to 50% reduction in ADE/FDE on Waymo’s WOD-E2E validation set compared to the CARLA-only baseline.
       </p>
       <div align="center">
         <img src="assets/waymo_err.png" height="auto" width="50%">
